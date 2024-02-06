@@ -6,7 +6,7 @@ interface props {
 export const MobileDownloadButton = ({ file }: props) => {
   return (
     <Button
-      className={"hidden md:block"}
+      className={"block sm:hidden"}
       onClick={async () => {
         try {
           await navigator.share({ files: [file!] });
@@ -15,7 +15,7 @@ export const MobileDownloadButton = ({ file }: props) => {
         }
       }}
     >
-      Download CV
+      Download CV Mobile
     </Button>
   );
 };

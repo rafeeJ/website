@@ -7,7 +7,7 @@ interface props {
 export const DesktopDownloadButton = ({ file }: props) => {
   return (
     <Button
-      className={"block md:hidden"}
+      className={"hidden sm:block"}
       onClick={async () => {
         try {
           download(file, "rafeejenkins-cv.pdf", "application/pdf");
@@ -16,7 +16,7 @@ export const DesktopDownloadButton = ({ file }: props) => {
         }
       }}
     >
-      Download CV
+      Download CV Desktop
     </Button>
   );
 };
