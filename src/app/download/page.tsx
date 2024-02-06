@@ -1,21 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { useDownloadCV } from "@/hooks/useDownloadCV/useDownloadCV";
+import { DownloadCvButton } from "@/features/cv-download/download-cv-button";
 
 export default function Download() {
-  const { cv, loading, error } = useDownloadCV();
-  return (
-    <Button
-      onClick={async () => {
-        try {
-          await navigator.share({ files: [cv!] });
-        } catch (e) {
-          console.error(e);
-        }
-      }}
-      disabled={loading}
-    >
-      Download CV
-    </Button>
-  );
+  return <DownloadCvButton />;
 }

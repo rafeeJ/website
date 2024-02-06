@@ -1,7 +1,12 @@
 "use client";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
+import { DownloadCvButton } from "@/features/cv-download/download-cv-button";
 
 export default function Download() {
   const router = useRouter();
@@ -13,7 +18,10 @@ export default function Download() {
     <section>
       <Dialog defaultOpen={true} onOpenChange={handleClose}>
         <DialogContent>
-          <Button>Download CV</Button>
+          <DialogHeader>
+            <DialogTitle>Download CV</DialogTitle>
+          </DialogHeader>
+          <DownloadCvButton />
         </DialogContent>
       </Dialog>
     </section>
