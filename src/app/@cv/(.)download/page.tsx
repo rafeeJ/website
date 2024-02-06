@@ -19,7 +19,7 @@ export default function Download() {
       <Dialog defaultOpen={true} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Download CV</DialogTitle>
+            <DialogTitle>thanks for looking!</DialogTitle>
           </DialogHeader>
           <DownloadCvButton />
         </DialogContent>
