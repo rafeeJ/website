@@ -22,14 +22,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  cv,
 }: Readonly<{
   children: ReactNode;
+  cv: ReactNode;
 }>) {
   return (
     <html lang="en" className={`${inconsolata.variable} ${karla.variable}`}>
-      <body className={"max-w-4xl mx-auto p-5 sm:p-10 font-mono"}>
+      <body className={"max-w-4xl !mx-auto p-5 sm:p-10 font-mono"}>
         <Navbar />
         {children}
+        {cv}
       </body>
     </html>
   );
