@@ -4,14 +4,25 @@ export async function GET() {
   try {
     const fileId = process.env.CV_DOC_ID;
     const api = process.env.DOCS_API_KEY;
-    const cvURL = `https://www.googleapis.com/drive/v3/files/${fileId}/export?key=${api}&?mimetype=application/pdf`;
+
+    if (!fileId || !api) {
+      throw new Error("CV file ID or API key not found");
+    }
+
+    const cvURL = `https://www.googleapis.com/drive/v3/files/${fileId}/export?key=${api}&mimeType=application/pdf`;
+
     const response = await fetch(cvURL, {
       method: "GET",
       headers: {
         "Content-Type": "application/pdf",
         responseType: "blob",
       },
+      referrer: "https://rafeejenkins.com",
     });
+
+    if (!response.ok) {
+      throw new Error("Error fetching CV");
+    }
 
     const blob = await response.blob();
     return new NextResponse(blob, {
