@@ -16,7 +16,7 @@ export const DesktopDownloadButton = ({ file }: props) => {
         }
       }}
     >
-      Download CV Desktop
+      download cv
     </Button>
   );
 };

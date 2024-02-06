@@ -15,7 +15,7 @@ export const MobileDownloadButton = ({ file }: props) => {
         }
       }}
     >
-      Download CV Mobile
+      download cv
     </Button>
   );
 };
