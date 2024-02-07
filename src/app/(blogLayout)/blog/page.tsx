@@ -11,15 +11,17 @@ import { format, parse } from "date-fns";
 import { Metadata } from "next";
 import { getAllArticles } from "@/lib/blog-utils";
 
+const copy = {
+  title: "Rafee's Blog",
+  description: "I write stuff maybe sometimes.",
+};
+
 export const metadata: Metadata = {
-  title: "Blog | Split My Rent",
-  description: "Easy bill splitting for housemates, friends and partners.",
+  title: copy.title,
+  description: copy.description,
   openGraph: {
-    title: "Blog | Split My Rent",
-    description: "Easy bill splitting for housemates, friends and partners.",
-  },
-  alternates: {
-    canonical: "https://splitmyrent.com/blog",
+    title: copy.title,
+    description: copy.description,
   },
 };
 
@@ -27,7 +29,7 @@ export default async function Blog() {
   const blogs = await getAllArticles();
   return (
     <main className="flex flex-col justify-center">
-      <h1 className="text-3xl font-bold text-center">Blog</h1>
+      <h1 className="text-3xl font-bold text-center font-sans">Blog</h1>
 
       <section className="py-2 flex flex-col justify-center items-center">
         <div className="py-2 md:px-20 grid gap-2 grid-cols-1">
@@ -40,7 +42,7 @@ export default async function Blog() {
             >
               <Card>
                 <CardHeader>
-                  <CardTitle className={"text-primary"}>
+                  <CardTitle className={"text-primary font-sans"}>
                     {blog.meta.title}
                   </CardTitle>
                   <CardDescription>{blog.readingTime}</CardDescription>

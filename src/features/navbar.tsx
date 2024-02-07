@@ -7,6 +7,7 @@ export const Navbar = () => {
       <div className={"flex gap-4"}>
         <Link href={"/"}>home</Link>
         <Link href={"/download"}>cv</Link>
+        <Link href={"/blog"}>blog</Link>
       </div>
       <div className={"flex-grow"} />
       <div className={"gap-4 hidden md:flex"}>
