@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
 import { getPostBySlug } from "@/lib/blog-utils";
+import { BlogHeroMedia } from "@/features/blog/blog-hero-media";
 
 export async function generateMetadata({ params }: any) {
   const post = await getPostBySlug(params.slug);
@@ -38,6 +39,10 @@ export default async function Article({
 
       <article className="prose dark:prose-invert">
         <h1 className={"text-primary text-center"}>{frontmatter.title}</h1>
+        <BlogHeroMedia
+          video={frontmatter.featuredVideo}
+          image={frontmatter.featuredImage}
+        />
         <MDXRemote source={content} />
       </article>
     </section>

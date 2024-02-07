@@ -34,6 +34,8 @@ export async function getPostBySlug(slug: string) {
       // @ts-ignore
       readingTime: readingTime(source).text,
       description: data.description,
+      featuredImage: data.featuredImage,
+      featuredVideo: data.featuredVideo,
       ...data,
     },
   };
