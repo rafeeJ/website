@@ -34,7 +34,7 @@ export default async function Article({
   const { content, frontmatter } = await getPostBySlug(params.slug);
 
   return (
-    <section className={"flex flex-col justify-center items-center"}>
+    <section className={"md:flex md:flex-col justify-center items-center"}>
       <div className={"my-2 flex flex-row w-full"}>
         <Link href={`/blog`}>
           <Button className={"flex items-center justify-center"}>
@@ -45,7 +45,7 @@ export default async function Article({
         <div className={"grow"} />
       </div>
 
-      <article className="prose dark:prose-invert">
+      <article className="prose dark:prose-invert overflow-clip">
         <h1 className={"text-primary text-center"}>{frontmatter.title}</h1>
         <BlogHeroMedia
           video={frontmatter.featuredVideo}
