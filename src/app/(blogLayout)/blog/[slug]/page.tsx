@@ -4,18 +4,26 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
 import { getPostBySlug } from "@/lib/blog-utils";
 import { BlogHeroMedia } from "@/features/blog/blog-hero-media";
+import { Metadata } from "next";
 
-export async function generateMetadata({ params }: any) {
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   const post = await getPostBySlug(params.slug);
-  return {
+
+  const metadata: Metadata = {
     title: post.frontmatter.title + " by Rafee Jenkins",
     description: post.frontmatter.description,
     openGraph: {
       title: post.frontmatter.title + " | by Rafee Jenkins",
       description: post.frontmatter.description,
       type: "article",
+      authors: ["Rafee Jenkins"],
+      publishedTime: post.frontmatter.publishedAt,
     },
+    authors: [{ name: "Rafee Jenkins", url: "https://rafeejenkins.com" }],
+    keywords: post.frontmatter.keywords,
   };
+
+  return metadata;
 }
 
 export default async function Article({

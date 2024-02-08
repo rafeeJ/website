@@ -36,6 +36,7 @@ export async function getPostBySlug(slug: string) {
       description: data.description,
       featuredImage: data.featuredImage,
       featuredVideo: data.featuredVideo,
+      keywords: data.keywords,
       ...data,
     },
   };
