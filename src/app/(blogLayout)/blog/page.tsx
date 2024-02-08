@@ -27,13 +27,20 @@ export const metadata: Metadata = {
 
 export default async function Blog() {
   const blogs = await getAllArticles();
+
+  const orderedBlogs = blogs.sort((a, b) => {
+    const dateA = parse(a.meta.publishedAt, "dd/MM/yyyy", new Date());
+    const dateB = parse(b.meta.publishedAt, "dd/MM/yyyy", new Date());
+    return dateB.getTime() - dateA.getTime();
+  });
+
   return (
     <main className="flex flex-col justify-center">
       <h1 className="text-3xl font-bold text-center font-sans">Blog</h1>
 
       <section className="py-2 flex flex-col justify-center items-center">
         <div className="py-2 md:px-20 grid gap-2 grid-cols-1">
-          {blogs.map((blog) => (
+          {orderedBlogs.map((blog) => (
             <Link
               className={"max-w-screen-sm"}
               href={"/blog/" + blog.slug}

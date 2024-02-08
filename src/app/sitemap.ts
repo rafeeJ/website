@@ -5,8 +5,8 @@ import { parse } from "date-fns";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const allPosts = await getAllArticles();
   const posts = allPosts.map((post) => ({
-    url: `https://splitmy.rent/blog/${post.slug}`,
-    lastModified: parse(post.meta.date, "dd/MM/yyyy", new Date()),
+    url: `https://rafeejenkins.com/blog/${post.slug}`,
+    lastModified: parse(post.meta.publishedAt, "dd/MM/yyyy", new Date()),
     priority: 0.7,
   }));
   return [
