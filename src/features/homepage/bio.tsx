@@ -1,6 +1,6 @@
 export const Bio = () => {
   return (
-    <section className="mx-auto py-10 border-b border-gray-300">
+    <section className="mx-auto py-5 border-b border-gray-300">
       <div className="float-left mb-5 sm:mr-10 w-full sm:w-fit">
         <div className="w-24 h-24 mx-auto rounded-full overflow-hidden">
           <img
