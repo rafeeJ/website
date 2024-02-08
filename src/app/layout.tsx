@@ -3,6 +3,7 @@ import { Inconsolata, Karla } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import { Navbar } from "@/features/navbar";
+import { ThemeProvider } from "@/features/dark-mode/theme-provider";
 
 const karla = Karla({
   subsets: ["latin"],
@@ -40,9 +41,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inconsolata.variable} ${karla.variable}`}>
       <body className={"max-w-4xl !mx-auto p-5 sm:p-10 font-mono"}>
-        <Navbar />
-        {children}
-        {cv}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar />
+          {children}
+          {cv}
+        </ThemeProvider>
       </body>
     </html>
   );
