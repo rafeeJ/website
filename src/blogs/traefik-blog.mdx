@@ -1,0 +1,198 @@
+---
+title: How I configured Traefik the way I wanted!
+excerpt: and I am loving every bit of it!
+author: Rafee Jenkins
+publishedAt: '13/12/2024'
+keywords: ['traefik', 'docker', 'reverse-proxy', 'home-lab']
+---
+
+I just spent the last couple of hours configuring Traefik to work the way I want it to work. Now that's not a massive achievement, but for someone who has repeatedly put this off - its a big deal!
+
+## TL;DR
+- PiHole running on a Raspberry Pi in a Docker container
+- Proxmox running on a random enterprise computer i found on ebay
+- Traefik running as an LXC container on Proxmox
+- SSL working with cloudflare and letsencrypt
+
+
+## Creating my Pihole
+Setting up the PiHole was easy.
+
+As I had a bunch of crap on the pi, I did a fresh install of PiOS.
+I did have to purchase a microSD card USB-C reader thing off of amazon, which delayed my setup by a couple of days.
+I also have a dhcp binding on my router, so I linked the mac address of the pi to a static IP - which made it easy to know where to ssh
+
+So:
+- flashed PiOS to the SD card
+- booted up the pi
+- disabled the wifi, enabled internet, and switched off the desktop: `sudo raspi-config`
+- ssh into that sucker (ssh rafee@pi.local)
+- installed docker a la [this guide](https://docs.docker.com/engine/install/raspberry-pi-os/)
+- create a docker compose file with pihole (TODO: upload file to git)
+- forward dns to the pihole on my router
+
+## Creating Proxmox
+Again, setting up Proxmox was easy.
+I bought a dell prodesk for like £200 that came with 500gb nvme ssd, 32gb ram, and an i5 processor. Maybe I got ripped off, but I was happy with it.
+Also bought a renewed 2tb hdd from amazon warehouse for like £50
+
+- flash the iso to a USB using [balena etcher](https://www.balena.io/etcher/)
+- plug that sucker into the computer
+- go through the setup
+- navigate to web GUI
+
+### I love LXC
+I should have been using these the first time I setup my homelab. Hot damn they are good.
+
+I found this [project](https://community-scripts.github.io/ProxmoxVE/) that just has a bunch of scripts to install stuff.
+currently running:
+- homebridge
+- traefik
+
+and they are both working great!
+
+## pihole + traefik
+Now here comes the juicy part.
+
+Once you have spun up the traefik LXC, we need to do some tweaking in __pihole__ to get everything working right.
+1. go to pihole local dns
+1. create a local DNS record to point `traefik.home.rafee.cloud` to the traefik LXC IP (in this case, it was 192.168.1.151)
+1. create a CNAME record to point `pihole.home.rafee.cloud` to `traefik.home.rafee.cloud` (this was a little trick I read about so if the traefik LXC ip changes, I only have to change it in one place)
+
+since we are using a prebuilt traefik container, we need to do some tweaking to get it to work with pihole. I used the shell from proxmox to do all this work in the traefik LXC.
+The main file we really care about is the `traefik.yml` file. This is where we define the entrypoints, middlewares, and routers for traefik.
+This is in the `/etc/traefik/traefik.yml` file.
+
+this is what my file looks like:
+```yml
+providers:
+  file:
+    directory: /etc/traefik/conf.d/
+    watch: true
+
+entryPoints:
+  web:
+    address: ':80'
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ':443'
+    http:
+      tls:
+        certResolver: letsencrypt
+  traefik:
+    address: ':8080'
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: "<my email>"
+      storage: /etc/traefik/ssl/acme.json
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+        delayBeforeCheck: 0
+
+api:
+  dashboard: true
+  insecure: true
+
+log:
+  filePath: /var/log/traefik/traefik.log
+  format: json
+  level: INFO
+
+accessLog:
+  filePath: /var/log/traefik/traefik-access.log
+  format: json
+  filters:
+    statusCodes:
+      - "200"
+      - "400-599"
+    retryAttempts: true
+    minDuration: "10ms"
+  bufferingSize: 0
+  fields:
+    headers:
+      defaultMode: drop
+      names:
+        User-Agent: keep
+```
+
+This sets up a folder to watch for changes in the `conf.d` folder, and then sets up the entrypoints for traefik.
+In this case, I have a few files in the `conf.d` folder that define the routers and middlewares for my services.
+```bash
+root@traefik:/etc/traefik/conf.d# ls -la
+total 24
+drwxr-xr-x 2 root root 4096 Dec 13 17:03 .
+drwxr-xr-x 4 root root 4096 Dec 13 17:17 ..
+-rw-r--r-- 1 root root  303 Dec 13 17:02 homebridge.yml
+-rw-r--r-- 1 root root  547 Dec 13 17:03 pihole.yml
+-rw-r--r-- 1 root root  588 Dec 13 14:36 proxmox.yml
+-rw-r--r-- 1 root root  668 Dec 13 17:03 traefik.yml
+```
+
+## pihole.yml
+This is what my pihole.yml file looks like:
+```bash
+root@traefik:/etc/traefik/conf.d# cat pihole.yml
+http:
+  middlewares:
+    addAdmin:
+      redirectRegex:
+        regex: "^https?://pihole.home.rafee.cloud/$"
+        replacement: "http://pihole.home.rafee.cloud/admin/"
+
+  routers:
+    pihole:
+      rule: "Host(`pihole.home.rafee.cloud`)"
+      entryPoints:
+        - websecure
+      service: pihole
+      middlewares:
+        - addAdmin  # Apply the middleware
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    pihole:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.104"  # Pointing to your Pi-hole instance
+```
+
+## Done
+With all this setup done, you should be able to visit `pihole.home.rafee.cloud` and see your pihole dashboard.
+I am loving this setup.
+
+
+
+### IMPORTANT PLEASE READ FUTURE ME
+You are using cloudflare as your dns challenge, you need to create a token in cloudflare to do this.
+This video helped me, by [Chistian Lempa](https://www.youtube.com/watch?v=-hfejNXqOzA)
+
+For some reason, you also had issues with the cloud flare token, so you had to edit the traefik process. This is what you did:
+```bash
+nano /etc/systemd/system/traefik.service
+```
+and then you updated the file to look like this:
+```bash
+[Unit]
+Description=Traefik is an open-source Edge Router that makes publishing your services a fu>
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/traefik --configFile=/etc/traefik/traefik.yaml
+Restart=on-failure
+ExecReload=/bin/kill -USR1 $MAINPID
+Environment="CF_DNS_API_TOKEN=<token goes here>"
+
+[Install]
+WantedBy=multi-user.target
+```
+
