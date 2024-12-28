@@ -9,13 +9,15 @@ export async function GET() {
       throw new Error("CV file ID or API key not found");
     }
 
-    const cvURL = `https://www.googleapis.com/drive/v3/files/${fileId}/export?key=${api}&mimeType=application/pdf`;
+    const cvURL = `https://www.googleapis.com/drive/v3/files/${fileId}/export?key=${api}&mimeType=application/pdf&cacheBuster=${new Date().getTime()}`;
 
     const response = await fetch(cvURL, {
       method: "GET",
       headers: {
         "Content-Type": "application/pdf",
-        responseType: "blob",
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
+        Expires: "0",
       },
       referrer: "https://rafeejenkins.com",
     });
