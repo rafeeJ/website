@@ -14,8 +14,7 @@ export const Intro = () => {
       <div className={"font-sans"}>
         <div className={"flex flex-col pb-2 gap-0.5"}>
           <p>
-            I&apos;m currently forecasting chicken sales and developing
-            frontends at <span className={"underline"}>Nando&apos;s UK&I</span>.
+            I&apos;m currently building social sites at <span className={"underline"}>KOMI</span>.
           </p>
           <p>Some of my favourite technologies at the moment are:</p>
         </div>
